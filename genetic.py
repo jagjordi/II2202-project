@@ -1,14 +1,11 @@
-import struct
+# Genetic algorithm framework
+
 import random
+import copy
 
 #
 # UTILITY
 #
-
-def print_bytearray(arr):
-    for b in arr:
-        print(hex(b), ' ', end='')
-    print('')
 
 def get_bit(arr, n):
     byte_n = n // 8
@@ -54,7 +51,6 @@ def mutate_random_bits(arr, max_n):
 #
 
 def swap_region(arr1, arr2, start, length):
-    print(start, length)
     for i in range(start, start + length):
         temp = get_bit(arr1, i)
         set_bit(arr1, i, get_bit(arr2, i))
@@ -73,10 +69,42 @@ def swap_random_region(arr1, arr2, max_len, max_n):
         swap_region(arr1, arr2, offset, length)
 
 #
-# SELECTION
+# INTERFACE
 #
 
-# TODO
+def next_generation(gen_str_list, max_mutation_bit_n,
+                    max_crossover_couple_n, max_crossover_len,
+                    max_crossover_n_per_gs, gs_score_fn):
+    offsprings = copy.deepcopy(gen_str_list)
+    
+    # Apply mutation
+    for gs in offsprings:
+        mutate_random_bits(gs, max_mutation_bit_n)
 
+    # Apply crossover
+    crossover_couple_n = random.randint(0, max_crossover_couple_n)
+    for i in range(0, crossover_couple_n):
+        gs_idx_1 = 0
+        gs_idx_2 = 0
+        while gs_idx_1 == gs_idx_2:
+            gs_idx_1 = random.randint(0, len(offsprings) - 1)
+            gs_idx_2 = random.randint(0, len(offsprings) - 1)
+        swap_random_region(offsprings[gs_idx_1],
+                           offsprings[gs_idx_2],
+                           max_crossover_len, max_crossover_n_per_gs)
+
+    # Apply selection
+    gen_str_list += offsprings
+    scores = map(gs_score_fn, gen_str_list)
+    list_with_scores = map(
+        lambda gs, s: [gs, s],
+        gen_str_list, scores)
+    list_with_scores = list(list_with_scores)
+    list_with_scores.sort(key=lambda i: i[1], reverse=True)
+    list_with_scores = list_with_scores[0:len(list_with_scores)//2]
+    new_gen_str_list = map(lambda i:i[0], list_with_scores)
+    
+    # Return final list
+    return list(new_gen_str_list)
 
 
