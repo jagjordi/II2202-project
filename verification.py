@@ -74,5 +74,28 @@ def gs_to_list_with_size(arr_grey, ref_list):
         lst[i] = [n, size]
         idx += size
     return lst
-        
 
+#
+# INTERFACE
+#
+
+def apply_genetic(list_of_sol, max_mutation_bit_n,
+                  max_crossover_len, max_crossover_n_per_gs,
+                  n_generation, sol_score_fn):
+    def gs_score_fn(gs):
+        params_with_size = gs_to_list_with_size(gs, list_of_sol[0])
+        params = map(lambda couple: couple[0],
+                     params_with_size)
+        return sol_score_fn(list(params))
+            
+    list_of_gs = map(list_with_size_to_gs, list_of_sol)
+    list_of_gs = gen.next_n_generation(list(list_of_gs),
+                                       max_mutation_bit_n,
+                                       max_crossover_len,
+                                       max_crossover_n_per_gs,
+                                       n_generation, gs_score_fn)
+    list_of_op_sol = [None] * len(list_of_gs)
+    for i in range(len(list_of_gs)):
+        list_of_op_sol[i] = gs_to_list_with_size(list_of_gs[i],
+                                                 list_of_sol[0])
+    return list_of_op_sol
