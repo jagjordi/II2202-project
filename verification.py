@@ -13,16 +13,20 @@ def print_bytearray(arr):
         print(hex(b), ' ', end='')
     print('')
 
-# TODO make grey work with bytes
+# n is bytes
 def encode_grey(n):
-    return n ^ (n >> 1)
+    i = int.from_bytes(n, 'big')
+    i = i ^ (i >> 1)
+    return i.to_bytes(len(n), 'big')
 
+# n is bytes
 def decode_grey(n):
-    mask = n >> 1
+    i = int.from_bytes(n, 'big')
+    mask = i >> 1
     while mask != 0:
-        n = n ^ mask
+        i = i ^ mask
         mask = mask >> 1
-    return n
+    return i.to_bytes(len(n), 'big')
 
 # Float only bocomes 4 bytes.
 def get_grey_bytes(item, n):
@@ -34,12 +38,12 @@ def get_grey_bytes(item, n):
     else:
         raise TypeError('get_bytes not supported for ' +
                         str(type(item)) + ' with size ' + n + '.')
-    #data = encode_grey(data)
+    data = encode_grey(data)
     return data
 
 # ref is [num, byte_len]
 def from_grey_bytes(bts, ref_n):
-    #bts = decode_grey(bts)
+    bts = decode_grey(bts)
     data = 0
     if isinstance(ref_n, int):
         data = int.from_bytes(bts, 'big')
@@ -71,14 +75,4 @@ def gs_to_list_with_size(arr_grey, ref_list):
         idx += size
     return lst
         
-    
 
-# def byte_len(lst):
-#     tot_len = 0
-#     for item in lst:
-#         tot_len += ctypes.sizeof(item)
-#     return tot_len
-
-
-# (4).to_bytes(2, 'big')
-# arr[1:2] = (4).to_bytes(2, 'big')

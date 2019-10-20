@@ -11,11 +11,6 @@ gen.swap_random_region(arr, arr2, 4, 4)
 ver.print_bytearray(arr)
 ver.print_bytearray(arr2)
 
-g = ver.encode_grey(4)
-print(g)
-n = ver.decode_grey(g)
-print(n)
-
 gen_str_list = [bytearray(3), bytearray(3), bytearray(3)]
 gen_str_list = gen.next_n_generation(gen_str_list, 4, 4, 3, 50,
                                      lambda gs: gs[0]+gs[1]+gs[2])
