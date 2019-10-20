@@ -40,8 +40,8 @@ def mutate_one_bit(arr, n):
 
 # Alter random number of, [0, max_n], random bits in the array
 def mutate_random_bits(arr, max_n):
-    assert max_n >= 0
-    n = random.randint(0, max_n)
+    assert max_n >= 1
+    n = random.randint(1, max_n)
     for i in range(n):
         bit_n = random.randint(0, len(arr) * 8 - 1)
         mutate_one_bit(arr, bit_n)
@@ -60,9 +60,9 @@ def swap_random_region(arr1, arr2, max_len, max_n):
     assert len(arr1) == len(arr2)
     assert max_len >= 1
     assert max_len <= len(arr1) * 8
-    assert max_n >= 0
+    assert max_n >= 1
 
-    n = random.randint(0, max_n)    
+    n = random.randint(1, max_n)    
     for i in range(0, n):
         length = random.randint(1, max_len)
         offset = random.randint(0, len(arr1) * 8 - length)
@@ -73,7 +73,7 @@ def swap_random_region(arr1, arr2, max_len, max_n):
 #
 
 def next_generation(gen_str_list, max_mutation_bit_n,
-                    max_crossover_couple_n, max_crossover_len,
+                    crossover_couple_n, max_crossover_len,
                     max_crossover_n_per_gs, gs_score_fn):
     offsprings = copy.deepcopy(gen_str_list)
     
@@ -82,7 +82,6 @@ def next_generation(gen_str_list, max_mutation_bit_n,
         mutate_random_bits(gs, max_mutation_bit_n)
 
     # Apply crossover
-    crossover_couple_n = random.randint(0, max_crossover_couple_n)
     for i in range(0, crossover_couple_n):
         gs_idx_1 = 0
         gs_idx_2 = 0
@@ -107,4 +106,15 @@ def next_generation(gen_str_list, max_mutation_bit_n,
     # Return final list
     return list(new_gen_str_list)
 
+def next_n_generation(gen_str_list, max_mutation_bit_n,
+                      max_crossover_len, max_crossover_n_per_gs,
+                      n_generation, gs_score_fn):
+    for n in range(n_generation):
+        crossover_couple_n = random.randint(len(gen_str_list) // 2,
+                                            len(gen_str_list))
+        gen_str_list = next_generation(
+            gen_str_list, max_mutation_bit_n, crossover_couple_n,
+            max_crossover_len, max_crossover_n_per_gs, gs_score_fn)
+        #print(gen_str_list)
+    return gen_str_list
 

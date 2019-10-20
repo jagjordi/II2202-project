@@ -17,9 +17,6 @@ n = ver.decode_grey(g)
 print(n)
 
 gen_str_list = [bytearray(3), bytearray(3), bytearray(3)]
-for i in range(0, 500):
-    gen_str_list = gen.next_generation(gen_str_list,
-                                       3, 2, 3, 2,
-                                       lambda gs: gs[0] + gs[1] + gs[2])
-    print(gen_str_list)
-                                
+gen_str_list = gen.next_n_generation(gen_str_list, 4, 4, 3, 50,
+                                     lambda gs: gs[0]+gs[1]+gs[2])
+print(gen_str_list)
